@@ -2,34 +2,26 @@ import Link from "next/link"
 import { Calendar, Clock, User } from "lucide-react"
 import { Card, CardContent, CardHeader } from "./ui/card"
 import { Badge } from "./ui/badge"
+import { AspectRatio } from "./ui/aspect-ratio"
+import { Post } from "../lib/posts"
 
-
-interface Post {
-    slug: string
-    title: string
-    excerpt: string
-    date: string
-    author: string
-    readTime: string
-    tags: string[]
-    category: string // Añadir esta línea
-}
 
 interface BlogCardProps {
     post: Post
 }
 
 export function BlogCard({ post }: BlogCardProps) {
+    console.log(post);
     return (
-        <Card className="w-full h-full min-h-100 max-w-sm hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-purple-500/20 transition-all duration-500 group hover:-translate-y-2 border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex flex-col">
-            <CardHeader className="pb-4 shrink-0">
+        <Card className="w-full h-full hover:shadow-xl hover:shadow-blue-400/8 dark:hover:shadow-purple-500/12 transition-all duration-400 group hover:-translate-y-1 border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex flex-col overflow-hidden">
+            <CardHeader className="pb-3 shrink-0">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex flex-wrap gap-2">
                         {post.tags.slice(0, 2).map((tag, index) => (
                             <Badge
                                 key={tag}
                                 variant="outline"
-                                className="text-xs bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/50 dark:to-purple-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:scale-105 transition-transform duration-200"
+                                className="text-xs bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/50 dark:to-purple-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:scale-105 transition-transform duration-200"
                                 style={{ animationDelay: `${index * 50}ms` }}
                             >
                                 {tag}
@@ -38,11 +30,19 @@ export function BlogCard({ post }: BlogCardProps) {
                     </div>
                     <Badge
                         variant="secondary"
-                        className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/50 dark:to-pink-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 flex-shrink-0"
+                        className="text-xs bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/50 dark:to-pink-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 shrink-0"
                     >
                         {post.category}
                     </Badge>
                 </div>
+
+                {post.image && (
+                    <div className="mb-3 rounded-2xl overflow-hidden">
+                        <AspectRatio ratio={16 / 9} className="w-full rounded-2xl overflow-hidden">
+                            <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
+                        </AspectRatio>
+                    </div>
+                )}
                 <Link href={`/blog/${post.slug}`}>
                     <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2 leading-tight">
                         {post.title}
@@ -50,7 +50,7 @@ export function BlogCard({ post }: BlogCardProps) {
                 </Link>
             </CardHeader>
 
-            <CardContent className="flex-1 flex flex-col justify-between">
+            <CardContent className="flex-1 flex flex-col justify-between py-4">
                 <div className="flex-1">
                     <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3 leading-relaxed text-sm">{post.excerpt}</p>
                 </div>
@@ -58,7 +58,7 @@ export function BlogCard({ post }: BlogCardProps) {
                 <div className="space-y-4 mt-auto">
                     <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                         <div className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                            <User className="w-3 h-3 flex-shrink-0" />
+                            <User className="w-3 h-3 shrink-0" />
                             <span className="truncate">{post.author}</span>
                         </div>
                         <div className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">

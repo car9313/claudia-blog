@@ -1,17 +1,8 @@
 'use client'
 import { motion, AnimatePresence } from "framer-motion"
 import { BlogCard } from "./blog-card"
+import { Post } from "../lib/posts"
 
-interface Post {
-    slug: string
-    title: string
-    excerpt: string
-    date: string
-    author: string
-    readTime: string
-    tags: string[]
-    category: string
-}
 
 interface PostsGridProps {
     posts: Post[]
