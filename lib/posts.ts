@@ -129,6 +129,9 @@ export function getRelatedPosts(post: Post, limit = 3): Post[] {
     // Sort by score and return top posts
     return postsWithScores
         .sort((a, b) => b.score - a.score)
+        .filter((item) => {
+            return item.score > 0
+        })
         .slice(0, limit)
         .map((item) => item.post)
 }

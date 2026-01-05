@@ -12,7 +12,6 @@ export function PostsGrid({ posts }: PostsGridProps) {
 
     return (
         <div className="w-full max-w-7xl mx-auto">
-            {/* Grid responsivo con tamaños fijos */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8 auto-rows-fr">
                 <AnimatePresence mode={"sync"}>
                     {posts.map((post, index) => (
@@ -46,7 +45,6 @@ export function PostsGrid({ posts }: PostsGridProps) {
                 </AnimatePresence>
             </div>
 
-            {/* Mensaje cuando no hay posts */}
             {posts.length === 0 && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16">
                     <p className="text-slate-500 dark:text-slate-400 text-lg">No hay artículos en esta categoría</p>

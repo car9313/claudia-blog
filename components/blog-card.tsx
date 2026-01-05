@@ -11,7 +11,6 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
-    console.log(post);
     return (
         <Card className="w-full h-full hover:shadow-xl hover:shadow-blue-400/8 dark:hover:shadow-purple-500/12 transition-all duration-400 group hover:-translate-y-1 border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex flex-col overflow-hidden">
             <CardHeader className="pb-3 shrink-0">
