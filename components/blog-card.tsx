@@ -3,7 +3,7 @@ import { Calendar, Clock, User } from "lucide-react"
 import { Card, CardContent, CardHeader } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { AspectRatio } from "./ui/aspect-ratio"
-import { Post } from "../lib/posts"
+import { Post } from "../lib/salva"
 
 
 interface BlogCardProps {

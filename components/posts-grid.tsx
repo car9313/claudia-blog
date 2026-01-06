@@ -1,7 +1,7 @@
 'use client'
 import { motion, AnimatePresence } from "framer-motion"
 import { BlogCard } from "./blog-card"
-import { Post } from "../lib/posts"
+import { Post } from "../lib/salva"
 
 
 interface PostsGridProps {

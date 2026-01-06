@@ -139,7 +139,6 @@
 
 }
 
-/* ...existing code... */
 
 @layer base {
   * {
@@ -149,6 +148,31 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer components {
+  .headerNavContainer {
+    @apply border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 rounded-md border-b backdrop-filter backdrop-blur-xl bg-clip-padding sticky top-0 z-50;
+
+    nav {
+      @apply flex flex-row justify-between mx-auto container sm:px-10 px-5 py-2;
+    }
+
+    .logo {
+      @apply flex flex-row items-center gap-2;
+
+      p {
+        @apply text-xl font-bold italic max-sm:hidden;
+      }
+    }
+
+    ul {
+      @apply flex flex-row items-center gap-3;
+    }
+
+  }
+
+
 }
 
 /* Utility class that uses the consolidated gradient tokens */

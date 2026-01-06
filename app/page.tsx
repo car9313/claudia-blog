@@ -1,10 +1,8 @@
-import AnimatedBackground from "../components/animated-background";
 import { CategoryTabs } from "../components/CategoryTabs";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import HeaderButtons from "../components/header-button";
 import { PostsGrid } from "../components/posts-grid";
-import { getAllCategories, getPostsByCategory } from "../lib/posts";
+import { getAllCategories, getPostsByCategory } from "../lib/posts.server";
 
 interface RutesProps {
   searchParams: Promise<

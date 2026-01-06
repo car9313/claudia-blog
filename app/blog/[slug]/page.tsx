@@ -1,14 +1,12 @@
-import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Settings, User, Zap } from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import { Calendar, Clock, User } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Badge } from "../../../components/ui/badge";
-import { getPostBySlug, getRelatedPosts } from "../../../lib/posts";
+
 import { MarkdownContent } from "../../../components/MarkdownContent";
-import { ModeToggle } from "../../../components/ModeToggle";
 import { Suspense } from "react";
-import { BlogCard } from "../../../components/blog-card";
 import { RelatedPosts } from "../../../components/RelatedPosts";
+import { getPostBySlug } from "../../../lib/posts.server";
+import { relatedPostsServer } from "../../../lib/actions/relatedPost";
 
 
 interface BlogPostPageProps {
@@ -21,19 +19,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     if (!post) {
         notFound();
     }
-    const relatedPosts = getRelatedPosts(post, 3)
+    const relatedPosts = await relatedPostsServer(post)
     return (
         <Suspense fallback={<p>Cargando</p>}>
             <>
                 <div className="flex justify-start items-center mb-8">
-
-                    <Link
-                        href="/"
-                        className="inline-flex items-center gap-2 px-6 py-2 bg-linear-to-r from-indigo-500 to-violet-200 text-white rounded-xl hover:shadow-xl hover:shadow-indigo/30 transition-all font-semibold hover:scale-105"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Volver al blog
-                    </Link>
                 </div>
 
                 <article className="max-w-4xl mx-auto">

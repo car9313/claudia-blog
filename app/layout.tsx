@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
 import AnimatedBackground from "../components/animated-background";
 import HeaderButtons from "../components/header-button";
+import Navbar from "../components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,11 +37,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Navbar />
           <div className="min-h-screen app-bg transition-colors duration-500">
             <AnimatedBackground />
             <div className="app-content">
               <div className="container mx-auto px-4 py-6 ">
-                <HeaderButtons />
                 {children}
               </div>
             </div>

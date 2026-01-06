@@ -5,7 +5,7 @@ excerpt: "Descubre cómo los React Server Components están revolucionando el de
 category: "React"
 tags: ["react", "nextjs", "server-components"]
 author: "Tu Nombre"
-image: "/placeholder.svg?height=400&width=800"
+image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
 ---
 
 # Introducción a React Server Components
