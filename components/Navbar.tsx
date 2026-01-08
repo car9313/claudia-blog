@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import HeaderButtons from "./header-button";
 import { SearchDialog } from "./SearchDialog";
 import { ModeToggle } from "./ModeToggle";
 

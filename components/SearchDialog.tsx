@@ -1,12 +1,10 @@
-// components/SearchDialog.tsx
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback, startTransition } from 'react'
+import { useState, useEffect, useRef, useCallback, startTransition } from 'react'
 import { Search, X, Loader2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import type { Post } from '@/lib/posts.types'
-import { BlogCard } from './blog-card'
 import { useDebounce } from '@/hooks/use-debounce'
 import { searchPostsServer } from '../lib/actions/searchPosts'
 import { Input } from './ui/input'
@@ -36,7 +34,6 @@ export function SearchDialog() {
 
         const reqId = Date.now()
         lastReqRef.current = reqId
-
         // startTransition para bajar prioridad de la actualización
         startTransition(() => {
             // Llamada a Server Action; Next la ejecuta en el servidor
@@ -81,7 +78,7 @@ export function SearchDialog() {
     }
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange} >
             <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="hover:bg-accent">
                     <Search className="h-4 w-4" />

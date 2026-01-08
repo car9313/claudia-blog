@@ -1,7 +1,7 @@
 'use client'
 import { motion, AnimatePresence } from "framer-motion"
 import { BlogCard } from "./blog-card"
-import { Post } from "../lib/salva"
+import { Post } from "../lib/posts.types"
 
 
 interface PostsGridProps {
@@ -39,7 +39,7 @@ export function PostsGrid({ posts }: PostsGridProps) {
                             layout
                             className="w-full max-w-sm mx-auto"
                         >
-                            <BlogCard post={post} />
+                            <BlogCard key={post.slug} post={post} />
                         </motion.div>
                     ))}
                 </AnimatePresence>
