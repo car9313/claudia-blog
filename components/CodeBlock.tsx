@@ -10,7 +10,6 @@ interface CodeBlockProps {
 
 export async function CodeBlock({ code, language, fileName }: CodeBlockProps) {
     const { light, dark } = await highlightCode(code, language)
-
     return (
         <div className="relative my-6 rounded-lg border bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-200 dark:border-zinc-700">

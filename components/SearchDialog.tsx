@@ -82,13 +82,13 @@ export function SearchDialog() {
             <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="hover:bg-accent">
                     <Search className="h-4 w-4" />
-                    <span className="sr-only">Search posts</span>
+                    <span className="sr-only">Buscar posts</span>
                 </Button>
             </DialogTrigger>
 
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
                 <DialogHeader>
-                    <DialogTitle>Search Posts</DialogTitle>
+                    <DialogTitle>Buscar Posts</DialogTitle>
                 </DialogHeader>
 
                 <div className="relative">
@@ -128,8 +128,8 @@ export function SearchDialog() {
                     {!isLoading && hasSearched && results.length === 0 && (
                         <div className="text-center py-8">
                             <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <p className="text-muted-foreground">No posts found for "{query}"</p>
-                            <p className="text-sm text-muted-foreground mt-2">Try searching with different keywords</p>
+                            <p className="text-muted-foreground">No se encontraron pots para "{query}"</p>
+                            <p className="text-sm text-muted-foreground mt-2">Intente buscar una palabra diferente</p>
                         </div>
                     )}
 
