@@ -52,16 +52,15 @@
 
 /* ...existing code... */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --background: oklch(0.99 0.008 280);
+  --foreground: oklch(0.25 0.03 280);
+  --card: oklch(0.99 0.005 280);
+  --card-foreground: oklch(0.25 0.03 280);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
- 
+  --popover-foreground: oklch(0.25 0.03 280);
+
   /* Indigo pastel */
-  --primary: oklch(68.694% 0.16403 265.075);
+  --primary: oklch(0.65 0.14 265);
   --primary-foreground: oklch(0.99 0 0);
 
   /* Violeta pastel */
@@ -76,7 +75,6 @@
   --sky: oklch(0.78 0.1 220);
   --sky-foreground: oklch(0.2 0.03 280);
 
- 
   --muted: oklch(0.97 0.01 280);
   --muted-foreground: oklch(0.48 0.03 280);
 
@@ -86,6 +84,7 @@
   --input: oklch(0.93 0.015 280);
   --ring: oklch(0.65 0.14 265);
 
+  --radius: 0.75rem;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -98,25 +97,16 @@
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-
-  /* Background gradient tokens (light theme) - corresponden a las clases usadas en layout */
-  --bg-from: #eff6ff;
-  /* blue-50 */
-  --bg-via: #eef2ff;
-  /* indigo-50 */
-  --bg-to: #faf5ff;
-  /* purple-50 */
-}
+  --sidebar-ring: oklch(0.708 0 0);}
 
 /* ...existing code... */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --background: oklch(0.15 0.02 280);
+  --foreground: oklch(0.95 0.01 280);
+  --card: oklch(0.18 0.02 280);
+  --card-foreground: oklch(0.95 0.01 280);
+  --popover: oklch(0.18 0.02 280);
+  --popover-foreground: oklch(0.95 0.01 280);
   --primary: oklch(0.7 0.18 265);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.75 0.18 300);
@@ -143,28 +133,17 @@
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-
-  /* Background gradient tokens (dark theme) - corresponden a las clases usadas en layout */
-  --bg-from: #111827;
-  /* gray-900 */
-  --bg-via: #1e3a8a;
-  /* blue-900 */
-  --bg-to: #312e81;
-  /* indigo-900 */
-
-
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
-
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-
-  body {
-    @apply bg-background text-foreground;
+ body {
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 
