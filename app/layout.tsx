@@ -58,7 +58,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           
-          <div className="min-h-screen app-bg transition-colors duration-500  px-4 ">
+          <div className="min-h-screen  transition-colors duration-500  px-4 ">
                 <Navbar />
             <AnimatedBackground />
             <div className="app-content">
