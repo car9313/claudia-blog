@@ -17,13 +17,11 @@ export default async function Home({ searchParams }: RutesProps) {
   const filteredPosts = getPostsByCategory(activeCategory)
 
   return (
-
     <>
       <Header />
       <CategoryTabs categories={categories} />
       <PostsGrid posts={filteredPosts} />
       <Footer />
     </>
-
   );
 }

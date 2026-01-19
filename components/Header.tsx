@@ -1,18 +1,27 @@
+import { Sparkles, Star } from "lucide-react";
+
 export default function Header() {
     return (
-        <div className="text-center flex-1 mb-16">
-            <h1
-                className="text-5xl md:text-7xl font-bold tracking-tight text-balance leading-tight bg-linear-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-4"
-            >
-                DevWeb Blog
-            </h1>
-            <p
-                className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto"
-            >
-                Tu fuente de conocimiento sobre programación web moderna.
-                Tutoriales, tips y las últimas tendencias en desarrollo frontend y
-                backend.
-            </p>
+<section className="max-w-3xl md:text-2xl mx-auto text-center my-6">
+<div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-primary/20 via-secondary/20 to-accent/20 border border-primary/20 text-primary text-sm font-medium mb-4 hover:scale-105 transition-transform">
+          <Sparkles className="h-4 w-4" />
+          <span>Bienvenido al blog</span>
+          <Star className="h-4 w-4 text-accent" />
         </div>
-    )
+
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-balance leading-tight">
+          <span className="bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            Aprende Desarrollo
+          </span>
+          <br />
+          <span className="text-foreground">Web Moderno</span>
+        </h1>
+
+        <p className="text-xl text-muted-foreground  text-pretty leading-relaxed">
+          Tutoriales, guías y artículos sobre <span className="text-primary font-semibold">React</span>,{" "}
+          <span className="text-secondary font-semibold">TypeScript</span>,{" "}
+          <span className="text-accent font-semibold">Next.js</span> y las últimas tecnologías web
+        </p>
+      </section>
+)
 }

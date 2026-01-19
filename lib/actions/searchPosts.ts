@@ -7,5 +7,7 @@ export async function searchPostsServer(query: string): Promise<Post[]> {
     // Puedes añadir logs, metrics o validaciones aquí
     const q = (query ?? '').toString().trim()
     if (!q) return []
-    return searchPosts(q)
+    const prueba = searchPosts(q)
+    console.log(prueba)
+    return prueba
 }

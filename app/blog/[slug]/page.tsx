@@ -1,13 +1,12 @@
 import { Calendar, Clock, User } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Badge } from "../../../components/ui/badge";
-
 import { MarkdownContent } from "../../../components/MarkdownContent";
 import { Suspense } from "react";
 import { RelatedPosts } from "../../../components/RelatedPosts";
 import { getPostBySlug } from "../../../lib/posts.server";
 import { relatedPostsServer } from "../../../lib/actions/relatedPost";
-
+import { SafeImage } from "../../../components/safe-image";
 
 interface BlogPostPageProps {
     params: Promise<{ slug: string }>;
@@ -16,12 +15,22 @@ interface BlogPostPageProps {
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
     const post = getPostBySlug(slug);
+
     if (!post) {
         notFound();
     }
-    const relatedPosts = await relatedPostsServer(post)
+
+    const relatedPosts = await relatedPostsServer(post);
+
     return (
-        <Suspense fallback={<p>Cargando</p>}>
+        <Suspense fallback={
+            <div className="max-w-4xl mx-auto py-8">
+                <div className="animate-pulse">
+                    <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mb-4"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mb-8"></div>
+                </div>
+            </div>
+        }>
             <>
                 <div className="flex justify-start items-center mb-8">
                 </div>
@@ -65,20 +74,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </div>
                     </header>
 
+                    {/* Imagen principal con SafeImage */}
                     {post.image && (
                         <div className="mb-16 rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
-                            <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-auto" />
+                            <SafeImage
+                                src={post.image}
+                                alt={post.title}
+                                width={1200}
+                                height={600}
+                                className="w-full h-auto"
+                                priority={true}
+                            />
                         </div>
                     )}
+
+                    {/* MarkdownContent (Server Component) */}
                     <MarkdownContent content={post.content} />
-                    {
-                        relatedPosts.length > 0 &&
+
+                    {/* Posts relacionados */}
+                    {relatedPosts.length > 0 && (
                         <RelatedPosts posts={relatedPosts} />
-                    }
+                    )}
                 </article>
             </>
         </Suspense>
-
-
-    )
+    );
 }

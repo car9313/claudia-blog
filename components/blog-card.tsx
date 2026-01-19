@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { AspectRatio } from "./ui/aspect-ratio"
 import { Post } from "../lib/posts.types"
+import { SafeImage } from "./safe-image"
 
 
 
@@ -39,12 +40,21 @@ export function BlogCard({ post }: BlogCardProps) {
                 {post.image && (
                     <div className="mb-3 rounded-2xl overflow-hidden">
                         <AspectRatio ratio={16 / 9} className="w-full rounded-2xl overflow-hidden">
-                            <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
-                        </AspectRatio>
+                           {/*  <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
+ */}
+  <SafeImage
+                                 src={post.image}
+                                 alt={post.title}
+                                 width={1200}
+                                 height={600}
+                                 className="w-full h-auto"
+                                 priority={true}
+                             />
+                         </AspectRatio>
                     </div>
                 )}
                 <Link href={`/blog/${post.slug}`}>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2 leading-tight">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-tight">
                         {post.title}
                     </h2>
                 </Link>
@@ -73,7 +83,7 @@ export function BlogCard({ post }: BlogCardProps) {
 
                     <Link
                         href={`/blog/${post.slug}`}
-                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-all duration-300 hover:gap-3 group/link text-sm"
+                        className="inline-flex items-center gap-2 text-primary dark:text-primary hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-all duration-300 hover:gap-3 group/link text-sm"
                     >
                         Leer más
                         <span className="group-hover/link:translate-x-1 transition-transform duration-300">→</span>

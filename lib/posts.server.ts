@@ -80,7 +80,7 @@ export function searchPosts(search: string): Post[] {
 
     const all = getAllPosts()
     const lower = q.toLowerCase()
-
+    console.log(search)
     return all.filter((p) => p.title.toLowerCase().includes(lower))
 }
 
