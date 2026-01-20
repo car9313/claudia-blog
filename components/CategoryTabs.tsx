@@ -13,7 +13,8 @@ export function CategoryTabs({
     categories
 }: CategoryTabsProps) {
     const searchParams = useSearchParams();
-    const [activeCategory, setActiveCategory] = useState("Todos");
+    const categoryFromUrl = searchParams.get("category") || "Todos";
+    const [activeCategory, setActiveCategory] = useState(categoryFromUrl);
 
     const createQueryString = (name: string, value: string) => {
 

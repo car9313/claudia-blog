@@ -175,9 +175,3 @@
 
 
 }
-
-/* Utility class that uses the consolidated gradient tokens */
-.app-bg {
-  background-image: linear-gradient(to bottom right, var(--bg-from), var(--bg-via), var(--bg-to));
-  background-color: var(--background);
-}
