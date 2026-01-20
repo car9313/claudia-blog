@@ -21,7 +21,6 @@ export default async function Home({ searchParams }: RutesProps) {
       <Header />
       <CategoryTabs categories={categories} />
       <PostsGrid posts={filteredPosts} />
-      <Footer />
     </>
   );
 }

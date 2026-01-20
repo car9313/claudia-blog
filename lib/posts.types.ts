@@ -6,7 +6,7 @@ export interface Post {
     excerpt: string
     content: string
     category: string
-    author: string
+    author?: string
     tags: string[]
     readTime: string
     date: string

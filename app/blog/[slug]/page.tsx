@@ -76,16 +76,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
                     {/* Imagen principal con SafeImage */}
                     {post.image && (
-                        <div className="mb-16 rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
                             <SafeImage
                                 src={post.image}
                                 alt={post.title}
-                                width={1200}
-                                height={600}
-                                className="w-full h-auto"
+                                className="w-full h-auto mb-4"
                                 priority={true}
                             />
-                        </div>
+                        
                     )}
 
                     {/* MarkdownContent (Server Component) */}
