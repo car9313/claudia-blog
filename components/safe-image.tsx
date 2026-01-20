@@ -27,7 +27,7 @@ export function SafeImage({
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isExternal = src?.startsWith('http') || false;
-
+  
   // Fallback local
   const fallbackSrc = '/placeholder.svg';
 

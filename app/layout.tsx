@@ -57,17 +57,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          
-          <div className="min-h-screen  transition-colors duration-500  px-4 ">
-                <Navbar />
             <AnimatedBackground />
+                <Navbar />
             <div className="app-content">
               <div className="container mx-auto ">
                 {children}
               </div>
             </div>
               <Footer />
-          </div>
         </ThemeProvider>
 
       </body>
