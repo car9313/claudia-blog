@@ -10,12 +10,20 @@ function ensurePostsDir() {
         fs.mkdirSync(postsDirectory, { recursive: true })
     }
 }
+export function getPostSlugs() {
+  try {
+    return fs
+      .readdirSync(postsDirectory)
+      .filter((file) => file.endsWith(".md"));
+  } catch {
+    return [];
+  }
+}
 
 export function getAllPosts(): Post[] {
     ensurePostsDir()
 
-    const fileNames = fs.readdirSync(postsDirectory).filter((f) => f.endsWith('.md'))
-
+    const fileNames = getPostSlugs()
     const posts: Post[] = fileNames.map((fileName) => {
         const slug = fileName.replace(/\.md$/, '')
         const fullPath = path.join(postsDirectory, fileName)

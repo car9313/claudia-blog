@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
 import AnimatedBackground from "../components/animated-background";
 import Navbar from "../components/Navbar";
-import Footer from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,11 +59,11 @@ export default function RootLayout({
         >
             <AnimatedBackground />
                 <Navbar />
-            <div className="app-content">
+     
               <div className="container mx-auto ">
                 {children}
               </div>
-            </div>
+          
               <Footer />
         </ThemeProvider>
 

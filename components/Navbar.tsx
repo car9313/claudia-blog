@@ -7,7 +7,7 @@ import { CassetteTapeIcon, Code2, FolderOpen, Home } from "lucide-react";
 export default function Navbar() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 shadow-sm">
-           <div className="container mx-auto flex h-15 items-center justify-between">
+           <div className="flex justify-between items-center px-4 mx-auto h-15 ">
         <Link href="/" className="flex items-center space-x-3 group">
           <div className="p-2 bg-linear-to-br from-primary via-secondary to-accent rounded-xl group-hover:scale-110 transition-transform">
             <Code2 className="h-6 w-6 text-white" />

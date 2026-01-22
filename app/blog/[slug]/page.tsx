@@ -35,7 +35,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <div className="flex justify-start items-center mb-8">
                 </div>
 
-                <article className="max-w-4xl mx-auto">
+                <article className="max-w-4xl mx-auto p-2">
                     <header className="mb-8 animate-fade-in-up">
                         <div className="flex flex-wrap gap-2 mb-4">
                             {post.tags.map((tag, index) => (
