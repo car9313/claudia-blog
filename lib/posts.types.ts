@@ -10,6 +10,7 @@ export interface Post {
     tags: string[]
     readTime: string
     date: string
+    dateRaw?: string
     published: boolean
     image?: string
 }

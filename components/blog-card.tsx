@@ -27,7 +27,7 @@ export function BlogCard({ post }: BlogCardProps) {
         <CardHeader className="p-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 text-accent" />
-            <time dateTime={post.date}>{new Date(post.date).toLocaleDateString("es-ES")}</time>
+            <time dateTime={post.dateRaw ?? post.date}>{post.date}</time>
           </div>
           <CardTitle className="group-hover:text-primary transition-colors text-balance leading-tight line-clamp-2">
             {post.title}

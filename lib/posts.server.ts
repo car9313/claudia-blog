@@ -29,6 +29,10 @@ export function getAllPosts(): Post[] {
         const fullPath = path.join(postsDirectory, fileName)
         const fileContents = fs.readFileSync(fullPath, 'utf8')
         const { data, content } = matter(fileContents)
+        // Normalize date: keep raw ISO for sorting (`dateRaw`) and formatted human-friendly `date` (DD/MM/YYYY)
+        const dateIso = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const [y, m, d] = dateIso.split('-');
+        const formatted = `${d}/${m}/${y}`; // DD/MM/YYYY
 
         return {
             id: slug,
@@ -40,7 +44,8 @@ export function getAllPosts(): Post[] {
             author: data.author || 'Anónimo',
             tags: data.tags || [],
             readTime: data.readTime || '5 min',
-            date: data.date || new Date().toISOString().split('T')[0],
+            date: formatted,
+            dateRaw: dateIso,
             published: data.published !== false,
             image: data.image,
         }
@@ -48,7 +53,7 @@ export function getAllPosts(): Post[] {
 
     return posts
         .filter((post) => post.published)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .sort((a, b) => new Date((b.dateRaw as string)).getTime() - new Date((a.dateRaw as string)).getTime())
 }
 
 export function getPostBySlug(slug: string): Post | null {
@@ -58,6 +63,9 @@ export function getPostBySlug(slug: string): Post | null {
 
         const fileContents = fs.readFileSync(filePath, 'utf8')
         const { data, content } = matter(fileContents)
+        const dateIso = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const [y, m, d] = dateIso.split('-');
+        const formatted = `${d}/${m}/${y}`;
 
         return {
             id: slug,
@@ -69,7 +77,8 @@ export function getPostBySlug(slug: string): Post | null {
             author: data.author || 'Anónimo',
             tags: data.tags || [],
             readTime: data.readTime || '5 min',
-            date: data.date || new Date().toISOString().split('T')[0],
+            date: formatted,
+            dateRaw: dateIso,
             published: data.published !== false,
             image: data.image,
         }

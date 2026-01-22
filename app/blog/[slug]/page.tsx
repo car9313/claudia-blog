@@ -4,7 +4,9 @@ import { Badge } from "../../../components/ui/badge";
 import { MarkdownContent } from "../../../components/MarkdownContent";
 import { Suspense } from "react";
 import { RelatedPosts } from "../../../components/RelatedPosts";
-import { getPostBySlug } from "../../../lib/posts.server";
+import { getPostBySlug, getAllPosts } from "../../../lib/posts.server";
+import Link from 'next/link';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { relatedPostsServer } from "../../../lib/actions/relatedPost";
 import { SafeImage } from "../../../components/safe-image";
 
@@ -21,6 +23,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
 
     const relatedPosts = await relatedPostsServer(post);
+
+    // Calcular posts anterior/siguiente para la navegación
+    const allPosts = getAllPosts();
+    const currentIndex = allPosts.findIndex((p) => p.slug === slug);
+    const prevPost = currentIndex >= 0 && currentIndex + 1 < allPosts.length ? allPosts[currentIndex + 1] : null; // más antiguo
+    const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null; // más reciente
 
     return (
         <Suspense fallback={
@@ -93,6 +101,27 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         <RelatedPosts posts={relatedPosts} />
                     )}
                 </article>
+
+                                {/* Navegación Previous / Next */}
+                                <nav className="max-w-4xl mx-auto flex justify-between items-center mt-8">
+                                    {prevPost ? (
+                                        <Link href={`/blog/${prevPost.slug}`} rel="prev" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-primary">
+                                            <ArrowLeft className="w-4 h-4" />
+                                            <span className="truncate max-w-[200px]">{prevPost.title}</span>
+                                        </Link>
+                                    ) : (
+                                        <div />
+                                    )}
+
+                                    {nextPost ? (
+                                        <Link href={`/blog/${nextPost.slug}`} rel="next" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-primary">
+                                            <span className="truncate max-w-[200px]">{nextPost.title}</span>
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Link>
+                                    ) : (
+                                        <div />
+                                    )}
+                                </nav>
             </>
         </Suspense>
     );
