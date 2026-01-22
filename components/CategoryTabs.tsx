@@ -28,8 +28,8 @@ export function CategoryTabs({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="w-full max-w-4xl mx-auto mb-12">
-            <div className="flex flex-wrap justify-center gap-2 p-1  rounded-full border-b border-border/40 shadow-lg bg-linear-to-br from-card via-card to-muted/20">
+            className="w-full max-w-4xl mx-auto mb-12 px-4">
+            <div className="flex flex-wrap justify-center gap-2 p-2  rounded-full border-b border-border/40 shadow-lg bg-linear-to-br from-card via-card to-muted/20">
                 {categories.map((category) => (
                     <Link
                         key={category}

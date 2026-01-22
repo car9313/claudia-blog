@@ -1,17 +1,47 @@
-'use client'
-import { motion } from 'framer-motion';
-export default function Footer() {
+
+import { Github, Twitter, Linkedin } from "lucide-react"
+
+export function Footer() {
   return (
-    <motion.footer
-      className="mt-20 text-center text-slate-500 dark:text-slate-400"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6, delay: 0.8 }}
-    >
-      <p>
-        &copy; 2024 DevWeb Blog. Compartiendo conocimiento sobre
+    <footer className="border-t border-border mt-20">
+      <div className="container py-12">
+        <div className="flex flex-col  justify-center items-center gap-4 text-center">
+           <div className="flex items-center gap-4">
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Github className="h-5 w-5" />
+              <span className="sr-only">GitHub</span>
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Twitter className="h-5 w-5" />
+              <span className="sr-only">Twitter</span>
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Linkedin className="h-5 w-5" />
+              <span className="sr-only">LinkedIn</span>
+            </a>
+          </div>
+            <p className="text-sm text-muted-foreground">
+              &copy; {new Date().getFullYear()} DevBlog.  Compartiendo conocimiento sobre
         programación web.
-      </p>
-    </motion.footer>
+            </p>
+         
+        </div>
+      </div>
+    </footer>
   )
 }

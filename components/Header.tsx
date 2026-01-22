@@ -2,7 +2,7 @@ import { Sparkles, Star } from "lucide-react";
 
 export default function Header() {
     return (
-<section className="max-w-3xl md:text-2xl mx-auto text-center my-6">
+<section className="max-w-3xl  min-h-screen md:text-2xl  flex flex-col justify-center items-center mx-auto text-center">
 <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-primary/20 via-secondary/20 to-accent/20 border border-primary/20 text-primary text-sm font-medium mb-4 hover:scale-105 transition-transform">
           <Sparkles className="h-4 w-4" />
           <span>Bienvenido al blog</span>
