@@ -1,18 +1,35 @@
+---
+title: "SafeImage: código completo anotado"
+date: "2026-01-22"
+excerpt: "Código completo de `components/safe-image.tsx` con comentarios explicativos por línea/bloque"
+category: "Next.js"
+tags: [nextjs,image,responsive,annotated]
+author: "Tu Nombre"
+image: "/placeholder.svg?height=400&width=800"
+---
+
+# SafeImage — código completo anotado
+
+> Navegar a: [Explicación por bloques](/blog/safe-image-line-by-line)
+
+A continuación se muestra el archivo `components/safe-image.tsx` completo con anotaciones que explican qué hace cada bloque o línea importante. Puedes usar esto como referencia para entender o modificar el componente.
+
+```tsx
 // components/safe-image.tsx
-'use client'
+'use client' // Este componente corre en el cliente (permite hooks)
 
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import { ImageOff } from 'lucide-react';
+import Image from 'next/image'; // Componente de imagen optimizada de Next.js
+import { useState, useEffect } from 'react'; // Hooks React
+import { ImageOff } from 'lucide-react'; // Icono para fallback
 
-interface SafeImageProps {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  priority?: boolean;
-  inline?: boolean;
+interface SafeImageProps { // Tipado de props
+  src: string; // URL o ruta de la imagen
+  alt: string; // texto alternativo para accesibilidad
+  width?: number; // ancho objetivo (px) usado para aspect-ratio / max-width
+  height?: number; // alto objetivo (px)
+  className?: string; // clases adicionales para el wrapper
+  priority?: boolean; // si la imagen es prioritaria para Next.js
+  inline?: boolean; // modo inline: usa <img/> nativo y comportamiento responsivo simple
 }
 
 export function SafeImage({
@@ -24,14 +41,17 @@ export function SafeImage({
   priority = false,
   inline = false,
 }: SafeImageProps) {
+  // Estado: si la imagen presentó error al cargar
   const [hasError, setHasError] = useState(false);
+  // Estado: si la imagen está en carga (mostrar skeleton)
   const [isLoading, setIsLoading] = useState(true);
+  // Detección simple de URL externa para decidir optimización
   const isExternal = src?.startsWith('http') || false;
-  
-  // Fallback local
+
+  // Ruta fallback local (no siempre usada, pero útil como referencia)
   const fallbackSrc = '/placeholder.svg';
 
-  // Prevenir src vacío
+  // Early return: si no hay src válido, mostramos fallback (inline o bloque)
   if (!src || src.trim() === '') {
     return inline ? (
       <FallbackInline alt={alt} width={width} height={height} />
@@ -40,33 +60,41 @@ export function SafeImage({
     );
   }
 
-  // Detectar carga (incluye imágenes en caché) para ocultar el skeleton.
+  // useEffect: detecta si la imagen carga correctamente o falla
   useEffect(() => {
-    if (!src) return;
-    setIsLoading(true);
-    setHasError(false);
+    if (!src) return; // protección
+    setIsLoading(true); // empezar loader
+    setHasError(false); // resetear error
 
+    // Creamos una instancia Image del navegador para pre-cargar y detectar estado
     const img = new window.Image();
     img.src = src;
+
+    // Si la imagen ya está en caché, img.complete será true
     if (img.complete) {
       setIsLoading(false);
       return;
     }
+
+    // Handlers para load / error
     const handleLoad = () => setIsLoading(false);
     const handleError = () => {
       setHasError(true);
       setIsLoading(false);
     };
+
     img.addEventListener('load', handleLoad);
     img.addEventListener('error', handleError);
+
+    // Cleanup: eliminar listeners al desmontar o al cambiar src
     return () => {
       img.removeEventListener('load', handleLoad);
       img.removeEventListener('error', handleError);
     };
   }, [src]);
 
+  // Si ocurrió un error, mostrar fallback con mensaje
   if (hasError) {
-    // Mostrar mensaje específico de error cuando la imagen no carga
     return inline ? (
       <FallbackInline message="Esta imagen no existe" width={width} height={height} />
     ) : (
@@ -74,6 +102,7 @@ export function SafeImage({
     );
   }
 
+  // Modo inline: usamos <img/> nativo, con max-width y h-auto para responsividad
   if (inline) {
     return (
       <span
@@ -98,6 +127,7 @@ export function SafeImage({
     );
   }
 
+  // Modo bloque/responsive: wrapper relativo con padding-top para mantener aspect-ratio
   return (
     <div
       className={`relative mt-8 rounded-lg overflow-hidden shadow-lg ${className}`}
@@ -125,6 +155,7 @@ export function SafeImage({
   );
 }
 
+// Fallback para bloque
 function FallbackComponent({ alt, width, height, message }: { alt?: string; width: number; height: number; message?: string }) {
   const text = message || alt || 'Sin imagen';
   return (
@@ -140,6 +171,7 @@ function FallbackComponent({ alt, width, height, message }: { alt?: string; widt
   );
 }
 
+// Fallback inline
 function FallbackInline({ message, alt, width, height }: { message?: string; alt?: string; width?: number; height?: number }) {
   const text = message || alt || 'Sin imagen';
   const style = width || height ? { width: width ? `${width}px` : undefined, height: height ? `${height}px` : undefined } : undefined;
@@ -153,3 +185,8 @@ function FallbackInline({ message, alt, width, height }: { message?: string; alt
     </span>
   );
 }
+```
+
+---
+
+> Volver a: [Explicación por bloques](/blog/safe-image-line-by-line)

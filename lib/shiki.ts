@@ -30,7 +30,11 @@ export async function getHighlighter() {
                 'yaml',
                 'markdown',
                 'bash',
-                'shell'
+                'shell',
+                'vue',
+                'xml',
+                'diff',
+                'graphql'
             ],
         })
     }
