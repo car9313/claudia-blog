@@ -1,5 +1,5 @@
 import { CategoryTabs } from "@/components/CategoryTabs";
-import { PostsGrid } from "@/components/posts-grid";
+import { PostsGridAnimated } from "@/components/posts-grid-animated";
 import TitleHeader from "@/components/TitleHeader";
 import { getAllCategories, getPostsByCategory } from "@/lib/posts.server";
 
@@ -19,8 +19,7 @@ export default async function Categorias({ searchParams }: RutesProps) {
     <>
     <TitleHeader title={"Explorar por Categorías"} description={"Filtra los posts por categoría para encontrar exactamente lo que buscas"}/>
       <CategoryTabs categories={categories} />
-      <PostsGrid posts={filteredPosts} />
-    
+      <PostsGridAnimated posts={filteredPosts} enableInfiniteScroll={true} />
     </>
   );
 }
