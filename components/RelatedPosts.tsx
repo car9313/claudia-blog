@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight } from "lucide-react"
-import { Post } from "../lib/salva"
+import { Post } from "@/lib/posts.types"
+
 
 
 interface RelatedPostsProps {
