@@ -10,6 +10,14 @@ function ensurePostsDir() {
         fs.mkdirSync(postsDirectory, { recursive: true })
     }
 }
+
+// Simple in-memory cache for parsed posts. Only enabled in production to
+// avoid masking content edits during development.
+let postsCache: Post[] | null = null
+
+export function clearPostsCache() {
+    postsCache = null
+}
 export function getPostSlugs() {
   try {
     return fs
@@ -22,6 +30,9 @@ export function getPostSlugs() {
 
 export function getAllPosts(): Post[] {
     ensurePostsDir()
+
+    const isDev = process.env.NODE_ENV !== 'production'
+    if (!isDev && postsCache) return postsCache
 
     const fileNames = getPostSlugs()
     const posts: Post[] = fileNames.map((fileName) => {
@@ -51,9 +62,12 @@ export function getAllPosts(): Post[] {
         }
     })
 
-    return posts
+    const result = posts
         .filter((post) => post.published)
         .sort((a, b) => new Date((b.dateRaw as string)).getTime() - new Date((a.dateRaw as string)).getTime())
+
+    if (!isDev) postsCache = result
+    return result
 }
 
 export function getPostBySlug(slug: string): Post | null {
@@ -120,11 +134,11 @@ export function getPostsByCategory(category: string): Post[] {
     return posts.filter(post => post.category === category);
 }
 
-export function getRelatedPosts(post: Post, limit = 3): Post[] {
-    const allPosts = getAllPosts()
+export function getRelatedPosts(post: Post, limit = 3, allPosts?: Post[]): Post[] {
+    const source = allPosts ?? getAllPosts()
 
     // Filter out the current post
-    const otherPosts = allPosts.filter((p) => p.slug !== post.slug)
+    const otherPosts = source.filter((p) => p.slug !== post.slug)
 
     // Calculate relevance score based on shared tags
     const postsWithScores = otherPosts.map((otherPost) => {
