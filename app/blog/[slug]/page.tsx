@@ -16,16 +16,18 @@ interface BlogPostPageProps {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
-    const post = getPostBySlug(slug);
+
+    // Obtener lista completa una sola vez (usa caché en producción)
+    const allPosts = getAllPosts();
+    const post = allPosts.find((p) => p.slug === slug) ?? null;
 
     if (!post) {
         notFound();
     }
 
-    const relatedPosts = await relatedPostsServer(post);
+    const relatedPosts = await relatedPostsServer(post, allPosts);
 
     // Calcular posts anterior/siguiente para la navegación
-    const allPosts = getAllPosts();
     const currentIndex = allPosts.findIndex((p) => p.slug === slug);
     const prevPost = currentIndex >= 0 && currentIndex + 1 < allPosts.length ? allPosts[currentIndex + 1] : null; // más antiguo
     const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null; // más reciente
