@@ -1,23 +1,19 @@
-import TitleHeader from "@/components/TitleHeader";
+import Hero from "@/components/hero";
+import { PostsGrid } from "@/components/posts-grid";
+import TitleHeader from "@/components/title-header";
+import { getRecentPosts } from "@/lib/posts.server";
 
-import Header from "../components/Header";
-import { PostsGrid } from "../components/posts-grid";
-import { getAllCategories, getPostsByCategory, getRecentPosts } from "../lib/posts.server";
-
-interface RutesProps {
-  searchParams: Promise<
-    { category?: string }
-  >
-}
-
-export default async function Home({ searchParams }: RutesProps) {
-  const filteredPosts = getRecentPosts(6)
+export default async function Home() {
+  const filteredPosts = await getRecentPosts();
 
   return (
-    <>
-      <Header />
-     <TitleHeader title={"Últimos Posts"}  description="Los artículos más recientes del blog"/>
+    <div className="container mx-auto">
+      <Hero />
+      <TitleHeader
+        title={"Últimos Posts"}
+        description="Los artículos más recientes del blog"
+      />
       <PostsGrid posts={filteredPosts} />
-    </>
+    </div>
   );
 }

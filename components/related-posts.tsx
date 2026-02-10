@@ -15,7 +15,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
     }
 
     return (
-        <div className="mt-16 border-t border-border pt-12">
+        <>
             <h2 className="text-2xl font-bold mb-6 text-balance">Posts Relacionados</h2>
             <div className="grid gap-4 md:grid-cols-3">
                 {posts.map((post) => (
@@ -34,6 +34,6 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
                     </Link>
                 ))}
             </div>
-        </div>
+        </>
     )
 }

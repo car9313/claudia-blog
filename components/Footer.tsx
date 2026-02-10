@@ -1,12 +1,16 @@
-
 import { Github, Twitter, Linkedin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border mt-20">
+    <footer className="border-t border-border mt-20 px-4">
       <div className="container py-12">
-        <div className="flex flex-col  justify-center items-center gap-4 text-center">
-           <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-center md:text-left">
+            <p className="text-sm text-muted-foreground">
+              © {/* {new Date().getFullYear()} */} DevBlog. Creado con Next.js y Markdown.
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
             <a
               href="https://github.com"
               target="_blank"
@@ -35,11 +39,6 @@ export function Footer() {
               <span className="sr-only">LinkedIn</span>
             </a>
           </div>
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} DevBlog.  Compartiendo conocimiento sobre
-        programación web.
-            </p>
-         
         </div>
       </div>
     </footer>

@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef, useCallback, startTransition } from 'react'
 import { Search, X, Loader2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import type { Post } from '@/lib/posts.types'
-import { useDebounce } from '@/hooks/use-debounce'
-import { searchPostsServer } from '../lib/actions/searchPosts'
-import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import Link from 'next/link'
+import { useDebounce } from '@/hooks/use-debounce'
+import { searchPostsServer } from '@/lib/actions/searchPosts'
+import { Input } from './ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 
 export function SearchDialog() {
     const [open, setOpen] = useState(false)
@@ -80,7 +80,7 @@ export function SearchDialog() {
     return (
         <Dialog open={open} onOpenChange={handleOpenChange} >
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-accent">
+                <Button variant="link" size="icon" className="hover:text-accent">
                     <Search className="h-4 w-4" />
                     <span className="sr-only">Buscar posts</span>
                 </Button>

@@ -1,26 +1,22 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import AnimatedBackground from "@/components/animated-background";
+
 import "./globals.css";
-import { ThemeProvider } from "../components/theme-provider";
-import AnimatedBackground from "../components/animated-background";
 import Navbar from "../components/Navbar";
-import { Footer } from "@/components/Footer";
+import { Footer } from "../components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-geist-mono",
 });
-
 
 export const metadata: Metadata = {
   title: "DevBlog - Blog de Programación",
-  description: "Blog personal sobre desarrollo web, React, TypeScript, Next.js y más",
-  generator: "Claudia Alfonso Rodriguez",
+  description:
+    "Blog personal sobre desarrollo web, React, TypeScript, Next.js y más",
   icons: {
     icon: [
       {
@@ -38,8 +34,7 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-icon.png",
   },
-}
-
+};
 
 export default function RootLayout({
   children,
@@ -47,26 +42,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-            <AnimatedBackground />
-                <Navbar />
-     
-              <div className="container mx-auto ">
-                {children}
-              </div>
-          
-              <Footer />
+          <AnimatedBackground />
+          <Navbar />
+          <main className="min-h-screen ">{children}</main>
+          <Footer />
         </ThemeProvider>
-
       </body>
     </html>
   );

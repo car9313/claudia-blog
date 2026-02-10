@@ -1,16 +1,16 @@
 import Link from "next/link"
 import { ArrowRight, Calendar, Clock, User } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
-import { Post } from "../lib/posts.types"
+import { Post } from "@/lib/posts.types"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 
 
 
-interface BlogCardProps {
+interface PostCardProps {
     post: Post
 }
 
-export function BlogCard({ post }: BlogCardProps) {
+export function PostCard({ post }: PostCardProps) {
     return (
           <Link href={`/blog/${post.slug}`} className="group block h-full">
       <Card className="h-full transition-all duration-300 hover:shadow-2xl

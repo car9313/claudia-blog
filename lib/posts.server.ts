@@ -1,166 +1,173 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import type { Post } from './posts.types'
+// lib/posts.server.ts
+import fs from "fs/promises";
+import path from "path";
+import matter from "gray-matter";
+import type { Post } from "./posts.types";
+import { categories } from "@/data/categories";
+import { unstable_cache } from "next/cache";
 
-const postsDirectory = path.join(process.cwd(), 'content', 'posts')
+const postsDirectory = path.join(process.cwd(), "content", "posts");
 
-function ensurePostsDir() {
-    if (!fs.existsSync(postsDirectory)) {
-        fs.mkdirSync(postsDirectory, { recursive: true })
-    }
-}
+/**
+ * Lectura de un post desde el FS
+ */
+async function parsePostFromFile(fileName: string): Promise<Post> {
+  const slug = fileName.replace(/\.md$/, "");
+  const fullPath = path.join(postsDirectory, fileName);
+  const fileContents = await fs.readFile(fullPath, "utf8");
+  const { data, content } = matter(fileContents);
 
-// Simple in-memory cache for parsed posts. Only enabled in production to
-// avoid masking content edits during development.
-let postsCache: Post[] | null = null
+  const dateIso = data.date
+    ? new Date(data.date).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0];
+  const [y, m, d] = dateIso.split("-");
+  const formatted = `${d}/${m}/${y}`;
 
-export function clearPostsCache() {
-    postsCache = null
-}
-export function getPostSlugs() {
-  try {
-    return fs
-      .readdirSync(postsDirectory)
-      .filter((file) => file.endsWith(".md"));
-  } catch {
-    return [];
-  }
-}
-
-export function getAllPosts(): Post[] {
-    ensurePostsDir()
-
-    const isDev = process.env.NODE_ENV !== 'production'
-    if (!isDev && postsCache) return postsCache
-
-    const fileNames = getPostSlugs()
-    const posts: Post[] = fileNames.map((fileName) => {
-        const slug = fileName.replace(/\.md$/, '')
-        const fullPath = path.join(postsDirectory, fileName)
-        const fileContents = fs.readFileSync(fullPath, 'utf8')
-        const { data, content } = matter(fileContents)
-        // Normalize date: keep raw ISO for sorting (`dateRaw`) and formatted human-friendly `date` (DD/MM/YYYY)
-        const dateIso = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-        const [y, m, d] = dateIso.split('-');
-        const formatted = `${d}/${m}/${y}`; // DD/MM/YYYY
-
-        return {
-            id: slug,
-            slug,
-            title: data.title || 'Sin título',
-            excerpt: data.excerpt || '',
-            content: content || '',
-            category: data.category || 'General',
-            author: data.author || 'Anónimo',
-            tags: data.tags || [],
-            readTime: data.readTime || '5 min',
-            date: formatted,
-            dateRaw: dateIso,
-            published: data.published !== false,
-            image: data.image,
-        }
-    })
-
-    const result = posts
-        .filter((post) => post.published)
-        .sort((a, b) => new Date((b.dateRaw as string)).getTime() - new Date((a.dateRaw as string)).getTime())
-
-    if (!isDev) postsCache = result
-    return result
-}
-
-export function getPostBySlug(slug: string): Post | null {
-    try {
-        const filePath = path.join(postsDirectory, `${slug}.md`)
-        if (!fs.existsSync(filePath)) return null
-
-        const fileContents = fs.readFileSync(filePath, 'utf8')
-        const { data, content } = matter(fileContents)
-        const dateIso = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-        const [y, m, d] = dateIso.split('-');
-        const formatted = `${d}/${m}/${y}`;
-
-        return {
-            id: slug,
-            slug,
-            title: data.title || 'Sin título',
-            excerpt: data.excerpt || '',
-            content: content || '',
-            category: data.category || 'General',
-            author: data.author || 'Anónimo',
-            tags: data.tags || [],
-            readTime: data.readTime || '5 min',
-            date: formatted,
-            dateRaw: dateIso,
-            published: data.published !== false,
-            image: data.image,
-        }
-    } catch (err) {
-        console.error(`Error loading post ${slug}:`, err)
-        return null
-    }
+  return {
+    id: slug,
+    slug,
+    title: data.title || "Sin título",
+    excerpt: data.excerpt || "",
+    content: content || "",
+    category: data.category || "General",
+    author: data.author || "Anónimo",
+    tags: data.tags || [],
+    readTime: data.readTime || "5 min",
+    date: formatted,
+    dateRaw: dateIso,
+    published: data.published !== false,
+    image: data.image,
+  };
 }
 
 /**
- * Búsqueda básica server-side (title). Puedes ampliar a excerpt/tags/etc.
+ * Leer todos los posts desde FS
  */
-export function searchPosts(search: string): Post[] {
-    const q = (search ?? '').toString().trim()
-    if (!q) return []
+async function readAllPostsFromFS(): Promise<Post[]> {
+  await fs.mkdir(postsDirectory, { recursive: true }).catch(() => {});
+  const filenames = await fs.readdir(postsDirectory).catch(() => []);
+  const posts: Post[] = [];
 
-    const all = getAllPosts()
-    const lower = q.toLowerCase()
-    console.log(search)
-    return all.filter((p) => p.title.toLowerCase().includes(lower))
-}
-
-// Obtener todas las categorías
-export function getAllCategories(): string[] {
-    const posts = getAllPosts();
-    const categories = [...new Set(posts.map(post => post.category))];
-    return ['Todos', ...categories];
-}
-
-
-// Obtener posts por categoría
-export function getPostsByCategory(category: string): Post[] {
-    const posts = getAllPosts();
-
-    if (category === 'Todos') {
-        return posts;
+  for (const fileName of filenames.filter((f) => f.endsWith(".md"))) {
+    try {
+      const post = await parsePostFromFile(fileName);
+      posts.push(post);
+    } catch (err) {
+      console.error(`Error loading post ${fileName}:`, err);
     }
+  }
 
-    return posts.filter(post => post.category === category);
+  return posts;
 }
 
-export function getRelatedPosts(post: Post, limit = 3, allPosts?: Post[]): Post[] {
-    const source = allPosts ?? getAllPosts()
+/**
+ * Fuente de verdad cacheada (Next cache)
+ */
+export const getAllPostsCached = unstable_cache(async (): Promise<Post[]> => {
+  const posts = (await readAllPostsFromFS())
+    .filter((p) => p.published)
+    .sort(
+      (a, b) =>
+        new Date(b.dateRaw as string).getTime() -
+        new Date(a.dateRaw as string).getTime(),
+    );
+  return posts;
+}, ["all-posts"]);
 
-    // Filter out the current post
-    const otherPosts = source.filter((p) => p.slug !== post.slug)
-
-    // Calculate relevance score based on shared tags
-    const postsWithScores = otherPosts.map((otherPost) => {
-        const sharedTags = otherPost.tags.filter((tag) => post.tags.includes(tag))
-        return {
-            post: otherPost,
-            score: sharedTags.length,
-        }
-    })
-
-    // Sort by score and return top posts
-    return postsWithScores
-        .sort((a, b) => b.score - a.score)
-        .filter((item) => {
-            return item.score > 0
-        })
-        .slice(0, limit)
-        .map((item) => item.post)
+/**
+ * Helpers puros sobre array de posts ya cargado
+ */
+export function findPostInAll(allPosts: Post[], slug: string): Post | null {
+  return allPosts.find((p) => p.slug === slug) ?? null;
 }
 
-// Obtener posts recientes (opcional)
-export function getRecentPosts(limit: number = 3): Post[] {
-    const posts = getAllPosts();
-    return posts.slice(0, limit);
+export function getPrevNextFromAll(allPosts: Post[], slug: string) {
+  const idx = allPosts.findIndex((p) => p.slug === slug);
+  return {
+    prevPost: idx + 1 < allPosts.length ? allPosts[idx + 1] : null,
+    nextPost: idx > 0 ? allPosts[idx - 1] : null,
+  };
+}
+
+export function getRelatedPostsFromAll(
+  allPosts: Post[],
+  currentPost: Post,
+  limit = 3,
+): Post[] {
+  const other = allPosts.filter((p) => p.slug !== currentPost.slug);
+  const scored = other.map((p) => {
+    const sharedTags = p.tags.filter((t) =>
+      currentPost.tags.includes(t),
+    ).length;
+    return {
+      p,
+      score: sharedTags + (p.category === currentPost.category ? 1 : 0),
+    };
+  });
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .filter((s) => s.score > 0)
+    .slice(0, limit)
+    .map((s) => s.p);
+}
+
+/**
+ * Funciones async públicas
+ */
+export async function getPrevNextPost(slug: string) {
+  const all = await getAllPostsCached();
+  return getPrevNextFromAll(all, slug);
+}
+
+export async function getRelatedPosts(currentPost: Post, limit = 3) {
+  const all = await getAllPostsCached();
+  return getRelatedPostsFromAll(all, currentPost, limit);
+}
+
+export async function getRecentPosts(limit = 3) {
+  const posts = await getAllPostsCached();
+  return posts.slice(0, limit);
+}
+
+/**
+ * Categorías (estáticas)
+ */
+export function getAllCategories(): string[] {
+  return ["Todos", ...new Set(categories.map((c) => c.name))];
+}
+
+/**
+ * Búsqueda sobre posts ya cargados
+ */
+export function searchPostsFromAll(allPosts: Post[], search: string): Post[] {
+  const q = (search ?? "").toString().trim();
+  if (!q) return [];
+  const lower = q.toLowerCase();
+  return allPosts.filter(
+    (p) =>
+      p.title.toLowerCase().includes(lower) ||
+      p.excerpt.toLowerCase().includes(lower) ||
+      p.tags.some((tag) => tag.toLowerCase().includes(lower)),
+  );
+}
+
+export async function searchPosts(search: string): Promise<Post[]> {
+  const all = await getAllPostsCached();
+  return searchPostsFromAll(all, search);
+}
+
+/**
+ * Posts por categoría
+ */
+export function getPostsByCategoryFromAll(
+  allPosts: Post[],
+  category: string,
+): Post[] {
+  if (!category || category === "Todos") return allPosts;
+  return allPosts.filter((p) => p.category === category);
+}
+
+export async function getPostsByCategory(category: string): Promise<Post[]> {
+  const allPosts = await getAllPostsCached();
+  return getPostsByCategoryFromAll(allPosts, category);
 }

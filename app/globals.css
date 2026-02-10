@@ -1,56 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* shadcn color tokens consolidated here (removed separate app/shadcn-colors.css)
-  These variables are the canonical source for background/card/popover/sidebar
-  tokens used across the app. Keep values in one place to avoid duplication. */
-
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-}
-
-/* ...existing code... */
+/* Paleta de colores pastel: indigo, violeta, rosa y azul cielo */
 :root {
   --background: oklch(0.99 0.008 280);
   --foreground: oklch(0.25 0.03 280);
@@ -97,9 +50,9 @@
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);}
+  --sidebar-ring: oklch(0.708 0 0);
+}
 
-/* ...existing code... */
 .dark {
   --background: oklch(0.15 0.02 280);
   --foreground: oklch(0.95 0.01 280);
@@ -137,39 +90,439 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
   }
- body {
+
+  body {
     background-color: var(--background);
     color: var(--foreground);
   }
 }
 
-@layer components {
-  .headerNavContainer {
-    @apply 
-    w-full max-w-lg
-    rounded-full
-   border-b border-border/40 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 shadow-sm
-    sticky top-2  mx-auto z-50;
 
-    nav {
-      @apply flex flex-row justify-between mx-auto  px-2 py-2;
-    }
 
-    .logo {
-      @apply flex flex-row items-center gap-2;
+/* Estilos mejorados para el renderizado de Markdown - SIN @apply */
+.prose {
+  color: var(--foreground);
+  max-width: none;
+}
 
-      p {
-        @apply text-xl font-bold italic max-sm:hidden;
-      }
-    }
+.prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+  background: linear-gradient(to right, var(--primary), var(--secondary), var(--accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-    ul {
-      @apply flex flex-row items-center gap-3;
-    }
+.prose h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  color: var(--foreground);
+  border-bottom: 2px solid color-mix(in oklch, var(--primary) 30%, transparent);
+  padding-bottom: 0.75rem;
+}
 
-  }
+.prose h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.prose h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--secondary);
+}
+
+.prose p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+  color: color-mix(in oklch, var(--foreground) 90%, transparent);
+  font-size: 1.125rem;
+}
+
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.prose a:hover {
+  color: var(--secondary);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.prose em {
+  font-style: italic;
+  color: var(--secondary);
+}
+
+.prose ul {
+  list-style-type: disc;
+  list-style-position: outside;
+  margin-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.prose ul li {
+  margin-top: 0.5rem;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+  margin-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.prose ol li {
+  margin-top: 0.5rem;
+}
+
+.prose li {
+  color: color-mix(in oklch, var(--foreground) 90%, transparent);
+  line-height: 1.75;
+}
+
+.prose li::marker {
+  color: var(--primary);
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1.25rem;
+  font-style: italic;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--muted-foreground);
+  background-color: color-mix(in oklch, var(--accent) 5%, transparent);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* Eliminado @apply y usando CSS puro para evitar errores de Tailwind v4 */
+.prose code {
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  border: 1px solid var(--border);
+  background-color: oklch(0.98 0.008 280);
+  color: oklch(0.35 0.05 280);
+}
+
+.dark .prose code {
+  background-color: oklch(0.12 0.02 280);
+  color: oklch(0.85 0.05 280);
+  border-color: oklch(0.25 0.03 280);
+}
+
+.prose pre {
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  background-color: oklch(0.98 0.008 280);
+}
+
+.dark .prose pre {
+  background-color: oklch(0.12 0.02 280);
+  border-color: oklch(0.25 0.03 280);
+}
+
+.prose pre code {
+  border: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  background-color: transparent;
+  color: oklch(0.35 0.05 280);
+  font-family: var(--font-mono);
+}
+
+.dark .prose pre code {
+  color: oklch(0.85 0.05 280);
+}
+
+.prose pre code[data-theme] {
+  background-color: transparent;
+}
+
+.prose pre code span {
+  font-family: var(--font-mono);
+}
+
+.prose img {
+  border-radius: 0.75rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border: 1px solid var(--border);
+}
+
+.prose hr {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-color: var(--border);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.prose th {
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  padding: 0.75rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.prose td {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.prose-wrapper {
+  line-height: 1.75;
+}
+
+.prose pre[data-line-numbers] {
+  padding-left: 3rem;
+}
+
+.prose pre[data-line-numbers] code {
+  counter-reset: line;
+}
+
+.prose pre[data-line-numbers] code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2rem;
+  margin-right: 1rem;
+  text-align: right;
+  color: var(--muted-foreground);
+}
+
+.prose pre code [data-highlighted-line] {
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  border-left: 2px solid var(--primary);
+  margin-left: -1.25rem;
+  margin-right: -1.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.prose pre code [data-chars-id] {
+  background-color: color-mix(in oklch, var(--accent) 20%, transparent);
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+/* Estilos mejorados para bloques de código estilo Next.js */
+.code-block-wrapper {
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: oklch(0.98 0.008 280);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark .code-block-wrapper {
+  background-color: oklch(0.1 0.02 280);
+  border-color: oklch(0.25 0.03 280);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: oklch(0.96 0.008 280);
+  border-bottom: 1px solid var(--border);
+}
+
+.dark .code-block-header {
+  background-color: oklch(0.08 0.02 280);
+  border-bottom-color: oklch(0.25 0.03 280);
+}
+
+.code-block-language {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-block-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.code-block-copy:hover {
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  border-color: var(--primary);
+}
+
+.code-block-copy svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.code-block-copy .hidden {
+  display: none;
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+  padding: 1.25rem;
+  overflow-x: auto;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: transparent !important;
+}
+
+.code-block-wrapper pre code {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  font-family: var(--font-mono);
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: var(--foreground);
+}
+
+/* Estilos para el resaltado de sintaxis generado por rehype-pretty-code */
+.code-block-wrapper pre code [data-line] {
+  display: block;
+  padding-inline: 1rem;
+  position: relative;
+  border-left: 2px solid transparent;
+}
+
+.code-block-wrapper .line-number {
+  position: absolute;
+  left: 0.5rem;
+  width: 2.5rem;
+  text-align: right;
+  color: var(--muted-foreground);
+  opacity: 0.5;
+  user-select: none;
+  font-size: 0.8125rem;
+}
+
+.code-block-wrapper pre code [data-line].highlighted {
+  background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+  border-left-color: var(--primary);
+}
+
+.code-block-wrapper pre code .highlighted-chars {
+  background-color: color-mix(in oklch, var(--accent) 25%, transparent);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+
+.code-block-wrapper pre code .shiki {
+  background-color: transparent !important;
+}
+
+/* Ajustar estilos de prose pre cuando está dentro de code-block-wrapper */
+.prose .code-block-wrapper pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.prose .code-block-wrapper pre code {
+  color: var(--shiki-color-text);
 }

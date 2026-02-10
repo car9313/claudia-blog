@@ -1,130 +1,158 @@
-import { Calendar, Clock, User } from "lucide-react";
+// app/blog/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import { Badge } from "../../../components/ui/badge";
-import { MarkdownContent } from "../../../components/MarkdownContent";
-import { Suspense } from "react";
-import { RelatedPosts } from "../../../components/RelatedPosts";
-import { getPostBySlug, getAllPosts } from "../../../lib/posts.server";
-import Link from 'next/link';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { relatedPostsServer } from "../../../lib/actions/relatedPost";
-import { SafeImage } from "../../../components/safe-image";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  getAllPostsCached,
+  getPrevNextPost,
+  getRelatedPosts,
+} from "@/lib/posts.server";
+import { processMarkdownToReact } from "@/lib/markdown";
+import { Badge } from "@/components/ui/badge";
+import { RelatedPosts } from "@/components/related-posts";
+import { Calendar, User, Clock, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface BlogPostPageProps {
-    params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  const posts = await getAllPostsCached();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const all = await getAllPostsCached();
+  const post = all.find((p) => p.slug === slug);
+  if (!post) return { title: "Post no encontrado" };
+  return { title: `${post.title} - DevBlog`, description: post.excerpt };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-    const { slug } = await params;
+  const { slug } = await params;
+  const all = await getAllPostsCached();
+  const post = all.find((p) => p.slug === slug);
 
-    // Obtener lista completa una sola vez (usa caché en producción)
-    const allPosts = getAllPosts();
-    const post = allPosts.find((p) => p.slug === slug) ?? null;
+  if (!post) notFound();
 
-    if (!post) {
-        notFound();
-    }
+  const { prevPost, nextPost } = await getPrevNextPost(post.slug);
+  const relatedPosts = await getRelatedPosts(post);
+  const readingTime = Math.ceil(post.content.split(/\s+/).length / 200);
+  const content = await processMarkdownToReact(post.content);
 
-    const relatedPosts = await relatedPostsServer(post, allPosts);
-
-    // Calcular posts anterior/siguiente para la navegación
-    const currentIndex = allPosts.findIndex((p) => p.slug === slug);
-    const prevPost = currentIndex >= 0 && currentIndex + 1 < allPosts.length ? allPosts[currentIndex + 1] : null; // más antiguo
-    const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null; // más reciente
-
-    return (
-        <Suspense fallback={
-            <div className="max-w-4xl mx-auto py-8">
-                <div className="animate-pulse">
-                    <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mb-4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mb-8"></div>
+  return (
+    <div className="container py-12 mx-auto max-w-4xl px-6">
+      <article className="mx-auto">
+        <header className="mb-16 space-y-6">
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              variant="secondary"
+              className="px-4 py-2 text-sm bg-primary/10 text-primary border-primary/20"
+            >
+              {post.category}
+            </Badge>
+            {post.tags.map((tag, index) => {
+              const colors = [
+                "border-secondary/30 text-secondary",
+                "border-accent/30 text-accent",
+              ];
+              return (
+                <Badge
+                  key={tag}
+                  variant="outline"
+                  className={`px-4 py-2 text-sm ${colors[index % colors.length]}`}
+                >
+                  {tag}
+                </Badge>
+              );
+            })}
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-balance leading-tight bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            {post.title}
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground text-pretty leading-relaxed">
+            {post.excerpt}
+          </p>
+          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground pt-6 border-t border-border">
+            {post.author && (
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-full">
+                  <User className="h-4 w-4 text-primary" />
                 </div>
+                <span>{post.author}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-secondary/10 rounded-full">
+                <Calendar className="h-4 w-4 text-secondary" />
+              </div>
+              <time dateTime={post.dateRaw ?? post.date}>
+                {new Date(post.dateRaw ?? post.date).toLocaleDateString(
+                  "es-ES",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
+              </time>
             </div>
-        }>
-            <>
-                <div className="flex justify-start items-center mb-8">
-                </div>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-accent/10 rounded-full">
+                <Clock className="h-4 w-4 text-accent" />
+              </div>
+              <span>{readingTime} min de lectura</span>
+            </div>
+          </div>
+        </header>
 
-                <article className="max-w-4xl mx-auto p-2">
-                    <header className="mb-8 animate-fade-in-up">
-                        <div className="flex flex-wrap gap-2 mb-4">
-                            {post.tags.map((tag, index) => (
-                                <Badge
-                                    key={tag}
-                                    variant="secondary"
-                                    className="bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 hover:scale-105 transition-transform duration-200"
-                                    style={{ animationDelay: `${index * 100}ms` }}
-                                >
-                                    {tag}
-                                </Badge>
-                            ))}
-                        </div>
+        {post.image && (
+          <div className="mb-16 rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
+            <Image
+              src={post.image}
+              alt={post.title}
+              width={1200}
+              height={630}
+            />
+          </div>
+        )}
 
-                        <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-slate-900 via-blue-800 to-indigo-800 dark:from-slate-100 dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent mb-6 leading-tight">
-                            {post.title}
-                        </h1>
+        <div className="prose w-full max-w-none mb-20">{content}</div>
 
-                        <p className="text-xl text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-                            {post.excerpt}
-                        </p>
+        {/* Previous / Next */}
+        <nav className="max-w-4xl mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center gap-2 mt-12 mb-8">
+          {prevPost ? (
+            <Link
+              href={`/blog/${prevPost.slug}`}
+              rel="prev"
+              className="inline-flex items-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="truncate max-w-50">{prevPost.title}</span>
+            </Link>
+          ) : (
+            <div />
+          )}
+          {nextPost ? (
+            <Link
+              href={`/blog/${nextPost.slug}`}
+              rel="next"
+              className="inline-flex items-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 transition-colors"
+            >
+              <span className="truncate max-w-50">{nextPost.title}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <div />
+          )}
+        </nav>
 
-                        <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
-                            <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                <User className="w-4 h-4" />
-                                {post.author}
-                            </div>
-                            <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                <Calendar className="w-4 h-4" />
-                                {post.date}
-                            </div>
-                            <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                <Clock className="w-4 h-4" />
-                                {post.readTime}
-                            </div>
-                        </div>
-                    </header>
-
-                    {/* Imagen principal con SafeImage */}
-                    {post.image && (
-                            <SafeImage
-                                src={post.image}
-                                alt={post.title}
-                                className="w-full h-auto mb-4"
-                                priority={true}
-                            />
-                        
-                    )}
-
-                    {/* MarkdownContent (Server Component) */}
-                    <MarkdownContent content={post.content} />
-
-                    {/* Posts relacionados */}
-                    {relatedPosts.length > 0 && (
-                        <RelatedPosts posts={relatedPosts} />
-                    )}
-                </article>
-
-                                {/* Navegación Previous / Next */}
-                                <nav className="max-w-4xl mx-auto flex justify-between items-center mt-8">
-                                    {prevPost ? (
-                                        <Link href={`/blog/${prevPost.slug}`} rel="prev" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-primary">
-                                            <ArrowLeft className="w-4 h-4" />
-                                            <span className="truncate max-w-[200px]">{prevPost.title}</span>
-                                        </Link>
-                                    ) : (
-                                        <div />
-                                    )}
-
-                                    {nextPost ? (
-                                        <Link href={`/blog/${nextPost.slug}`} rel="next" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-primary">
-                                            <span className="truncate max-w-[200px]">{nextPost.title}</span>
-                                            <ArrowRight className="w-4 h-4" />
-                                        </Link>
-                                    ) : (
-                                        <div />
-                                    )}
-                                </nav>
-            </>
-        </Suspense>
-    );
+        {relatedPosts.length > 0 && <RelatedPosts posts={relatedPosts} />}
+      </article>
+    </div>
+  );
 }
