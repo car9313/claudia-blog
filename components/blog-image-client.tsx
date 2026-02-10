@@ -29,10 +29,12 @@ export default function BlogImageClient({
     const anchor = document.getElementById(anchorId);
     if (!anchor) return;
 
-    const figure = anchor.closest("figure");
-    if (!figure) return;
+    /*  const figure = anchor.closest("figure");
+    if (!figure) return; */
+    const container = anchor.closest("figure") ?? anchor.closest("span");
+    if (!container) return;
 
-    const img = figure.querySelector("img") as HTMLImageElement | null;
+    const img = container.querySelector("img") as HTMLImageElement | null;
     if (!img) return;
 
     let mounted = true;
