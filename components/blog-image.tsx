@@ -9,10 +9,10 @@ interface BlogImageProps {
   width?: number;
   height?: number;
   className?: string;
-  inline?: boolean;          // nueva: inline vs block
-  priority?: boolean;        // nueva: next/image priority
-  sizes?: string;            // nueva: sizes para next/image
-  unoptimized?: boolean;     // opcional override
+  inline?: boolean; // nueva: inline vs block
+  priority?: boolean; // nueva: next/image priority
+  sizes?: string; // nueva: sizes para next/image
+  unoptimized?: boolean; // opcional override
 }
 
 /**
@@ -38,11 +38,15 @@ export function BlogImage({
     (safeSrc.startsWith("http://") || safeSrc.startsWith("https://"));
 
   // decide si permitimos optimización por defecto (si no se pasa un override)
-  const effectiveUnoptimized = typeof unoptimized === "boolean" ? unoptimized : isExternal;
+  const effectiveUnoptimized =
+    typeof unoptimized === "boolean" ? unoptimized : isExternal;
 
   // id estable por render (no importa que sea pseudo aleatorio; es serializable en SSR)
-  const clientId = `blogimage-${Math.random().toString(36).slice(2, 9)}`;
-
+  // Deterministic ID based on content — stable across replays
+  const hash = Buffer.from(`${safeSrc}|${alt}|${width}|${height}`)
+    .toString("base64url")
+    .slice(0, 10);
+  const clientId = `blogimage-${hash}`;
   // wrapper classes: inline o block
   const wrapperClass = inline
     ? `inline-block relative ${className || ""}`.trim()
@@ -51,7 +55,10 @@ export function BlogImage({
   // Si es inline no renderizamos figcaption por convención (puedes cambiar)
   if (inline) {
     return (
-      <span className={wrapperClass} style={width ? { width: `${width}px` } : undefined}>
+      <span
+        className={wrapperClass}
+        style={width ? { width: `${width}px` } : undefined}
+      >
         {/* next/image en modo "intrinsic" con width/height (no usamos fill para inline) */}
         <Image
           src={safeSrc}
@@ -61,7 +68,12 @@ export function BlogImage({
           priority={priority}
           sizes={sizes}
           unoptimized={effectiveUnoptimized}
-          style={{ display: "block", width: "100%", height: "auto", objectFit: "cover" }}
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            objectFit: "cover",
+          }}
         />
 
         {/* anchor para que el client-component pueda encontrar el <figure>/<span> */}

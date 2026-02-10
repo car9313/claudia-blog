@@ -76,11 +76,8 @@ export default function BlogImageClient({
         onLoad();
       }
     } else {
-      // not complete yet: prepare for fade-in when it loads
       img.style.opacity = "0";
       img.style.visibility = "visible";
-      setIsLoaded(false);
-      // listeners will handle load/error
     }
 
     return () => {
@@ -103,10 +100,10 @@ export default function BlogImageClient({
     setIsLoaded(false);
 
     // Cache-bust: append timestamp or counter
-    const src = img.getAttribute("src") ?? "";
-    const separator = src.includes("?") ? "&" : "?";
-    const newSrc = `${src}${separator}_r=${Date.now()}`;
-
+    const rawSrc = img.getAttribute("src") ?? "";
+    const cleanSrc = rawSrc.replace(/([?&])_r=\d+/g, "").replace(/[?&]$/, "");
+    const separator = cleanSrc.includes("?") ? "&" : "?";
+    const newSrc = `${cleanSrc}${separator}_r=${Date.now()}`;
     // Assign new src to force reload
     img.src = newSrc;
 
@@ -130,7 +127,9 @@ export default function BlogImageClient({
               <div className="p-3 rounded-full bg-muted/10">
                 <ImageIcon className="w-6 h-6 text-muted-foreground" />
               </div>
-              <div className="text-sm text-muted-foreground">Imagen no disponible</div>
+              <div className="text-sm text-muted-foreground">
+                Imagen no disponible
+              </div>
 
               <button
                 onClick={handleRetry}
