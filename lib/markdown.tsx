@@ -20,27 +20,25 @@ import { CodeBlock } from "@/components/code-block";
 import {
   HastElement,
   HastNode,
-  HastText,
-  HastRaw,
   isElement,
   isText,
   isRaw,
 } from "@/lib/hast-types";
 
-/**
- * Pipeline Markdown -> React (server-side friendly).
- * Este archivo añade detección de imágenes inline:
- * - Si una imagen está dentro de un párrafo MIXTO (texto + imagen), la img
- *   se marca con data-inline=true para que rehypeReact la pase como inline prop.
- */
-
-
-
-
 /* --- Utilidades recursivas --- */
-const BLOCKING_TAGS = ["img", "figure", "figcaption", "picture", "video", "iframe", "object"];
+const BLOCKING_TAGS = [
+  "img",
+  "figure",
+  "figcaption",
+  "picture",
+  "video",
+  "iframe",
+  "object",
+];
 
-function containsBlockingTag(node: HastNode | Node | null | undefined): boolean {
+function containsBlockingTag(
+  node: HastNode | Node | null | undefined,
+): boolean {
   if (!node) return false;
 
   if (isText(node)) return false;
@@ -65,7 +63,9 @@ function isOnlyImages(node: HastNode | Node | null | undefined): boolean {
   if (isText(node)) return (node.value ?? "").trim() === "";
   if (isRaw(node)) {
     const val = String(node.value ?? "").trim();
-    return /^(\s*<\s*(figure|img|picture)\b[\s\S]*>[\s\S]*<\/\s*figure\s*>\s*|\s*<\s*img\b[\s\S]*\/?>\s*)$/i.test(val);
+    return /^(\s*<\s*(figure|img|picture)\b[\s\S]*>[\s\S]*<\/\s*figure\s*>\s*|\s*<\s*img\b[\s\S]*\/?>\s*)$/i.test(
+      val,
+    );
   }
   if (isElement(node)) {
     const tag = (node.tagName || "").toLowerCase();
@@ -83,9 +83,11 @@ function markInlineImagesRecursively(nodes: HastNode[]) {
     if (isElement(child)) {
       const tag = (child.tagName || "").toLowerCase();
       if (tag === "img") {
-        child.properties = { ...(child.properties || {}), ["data-inline"]: true };
+        child.properties = {
+          ...(child.properties || {}),
+          ["data-inline"]: true,
+        };
       } else {
-        // Si es un wrapper (a, span, picture, etc) profundiza
         if (child.children && child.children.length > 0) {
           markInlineImagesRecursively(child.children as HastNode[]);
         }
@@ -102,48 +104,68 @@ export function extractImagesFromParagraphs() {
     if (!tree || typeof tree !== "object") return;
     if (!("children" in tree)) return;
 
-    visit(tree as any, "element", (node: Node, index?: number, parent?: Parent | null) => {
-      if (!parent || index === undefined) return;
-      if (!isElement(node)) return;
-      if (node.tagName !== "p") return;
+    // Tipamos `tree` como Parent para no usar `any`.
+    visit(
+      tree as Parent,
+      "element",
+      (node: Node, index: number | null, parent: Parent | null) => {
+        if (!parent || index === null || index === undefined) return;
+        if (!isElement(node)) return;
+        if (node.tagName !== "p") return;
 
-      const children = node.children ?? [];
+        const children = node.children ?? [];
 
-      // ¿hay nodos bloqueantes (img/figure/raw con img ...)?
-      const hasBlocked = children.some((c) => containsBlockingTag(c));
-      if (!hasBlocked) return;
+        // ¿hay nodos bloqueantes (img/figure/raw con img ...)?
+        const hasBlocked = children.some((c) => containsBlockingTag(c));
+        if (!hasBlocked) return;
 
-      // ¿el párrafo es solo imágenes (bloque) o mixto (texto + imagen)?
-      const onlyImgs = children.every((c) => isOnlyImages(c));
+        // ¿el párrafo es solo imágenes (bloque) o mixto (texto + imagen)?
+        const onlyImgs = children.every((c) => isOnlyImages(c));
 
-      if (onlyImgs) {
-        // Reemplaza <p> por <div class="image-container"> conservando hijos
-        parent.children[index] = {
-          type: "element",
-          tagName: "div",
-          properties: { className: ["image-container"] },
-          children: children,
-        } as HastElement;
-      } else {
-        // Antes de reemplazar, MARCAMOS las imágenes dentro del párrafo como INLINE
-        markInlineImagesRecursively(children as HastNode[]);
+        if (onlyImgs) {
+          // Reemplaza <p> por <div class="image-container"> conservando hijos
+          parent.children[index] = {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["image-container"] },
+            children: children,
+          } as HastElement;
+        } else {
+          // Antes de reemplazar, MARCAMOS las imágenes dentro del párrafo como INLINE
+          markInlineImagesRecursively(children as HastNode[]);
 
-        parent.children[index] = {
-          type: "element",
-          tagName: "div",
-          properties: {
-            ...node.properties,
-            className: [...(node.properties?.className || []), "paragraph-with-images"],
-          },
-          children: children,
-        } as HastElement;
-      }
-    });
+          parent.children[index] = {
+            type: "element",
+            tagName: "div",
+            properties: {
+              ...node.properties,
+              className: [
+                ...(node.properties?.className || []),
+                "paragraph-with-images",
+              ],
+            },
+            children: children,
+          } as HastElement;
+        }
+      },
+    );
   };
 }
 
+/* --- Types para rehype-react components --- */
+type RehypeImgProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+  "data-inline"?: boolean | "true" | "false";
+  dataInline?: boolean | "true" | "false";
+};
+
+type PreProps = React.ComponentPropsWithoutRef<"pre"> & {
+  children?: React.ReactNode;
+};
+
 /* --- Pipeline principal (Markdown -> ReactNode) --- */
-export async function processMarkdownToReact(content: string): Promise<ReactNode> {
+export async function processMarkdownToReact(
+  content: string,
+): Promise<ReactNode> {
   try {
     const file = await unified()
       .use(remarkParse)
@@ -151,37 +173,33 @@ export async function processMarkdownToReact(content: string): Promise<ReactNode
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeSanitize)
       .use(rehypePrettyCode, {})
-      // Nota: registramos la función (factory) como plugin para que unified la ejecute
       .use(extractImagesFromParagraphs)
       .use(rehypeReact, {
         jsx,
         jsxs,
         Fragment,
         components: {
-          img: (props: any) => {
-            // rehype-react pasa atributos tal cual; data-inline puede llegar como 'data-inline'
-            const rawInline = props["data-inline"] ?? props["dataInline"] ?? false;
+          img: (props: RehypeImgProps) => {
+            const rawInline = props["data-inline"] ?? props.dataInline ?? false;
             const inline = rawInline === true || rawInline === "true";
-            // pasar inline al BlogImage
+            // passthrough props carefully (asegurando tipos)
             return (
               <BlogImage
-                src={props.src}
-                alt={props.alt}
-                width={props.width}
-                height={props.height}
-                // pasar inline boolean
+                src={String(props.src ?? "")}
+                alt={String(props.alt ?? "")}
+                width={props.width ? Number(props.width) : undefined}
+                height={props.height ? Number(props.height) : undefined}
                 inline={inline}
               />
             );
           },
-          pre: (props: any) => <CodeBlock {...props} />,
+          pre: (props: PreProps) => <CodeBlock {...props} />,
         },
       })
       .process(content);
 
     return file.result as ReactNode;
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error("Error procesando markdown:", error);
     return <div className="prose">Error al procesar el contenido.</div>;
   }
