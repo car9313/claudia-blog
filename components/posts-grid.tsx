@@ -1,5 +1,5 @@
-import { BlogCard } from "./blog-card"
-import { Post } from "../lib/posts.types"
+import { Post } from "@/lib/posts.types"
+import { PostCard } from "./post-card"
 
 
 interface PostsGridProps {
@@ -8,11 +8,11 @@ interface PostsGridProps {
 
 export function PostsGrid({ posts }: PostsGridProps) {
     return (
-        <div className="w-full max-w-5xl mx-auto px-4">
+        <div className="w-full max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8 auto-rows-fr">
                 {posts.map((post) => (
                     <div key={`${post.slug}`} className="w-full max-w-sm mx-auto">
-                        <BlogCard post={post} />
+                        <PostCard post={post} />
                     </div>
                 ))}
             </div>

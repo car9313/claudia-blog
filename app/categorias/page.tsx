@@ -1,6 +1,6 @@
-import { CategoryTabs } from "@/components/CategoryTabs";
+import { CategoryTabs } from "@/components/category-tabs";
 import { PostsGridAnimated } from "@/components/posts-grid-animated";
-import TitleHeader from "@/components/TitleHeader";
+import TitleHeader from "@/components/title-header";
 import { getAllCategories, getPostsByCategory } from "@/lib/posts.server";
 
 interface RutesProps {

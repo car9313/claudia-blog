@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
-import { BlogCard } from "./blog-card"
 import { Post } from "../lib/posts.types"
+import { PostCard } from './post-card'
 
 
 interface PostsGridAnimatedProps {
@@ -81,7 +81,7 @@ export function PostsGridAnimated({ posts, enableInfiniteScroll = false }: Posts
                             layout
                             className="w-full max-w-sm mx-auto"
                         >
-                            <BlogCard key={post.slug} post={post} />
+                            <PostCard key={post.slug} post={post} />
                         </motion.div>
                     ))}
                 </AnimatePresence>
