@@ -64,7 +64,6 @@ async function run() {
     while ((m = regex.exec(content))) {
       const lang = m[1];
       const code = m[2];
-      const { codeToHtml } = highlighter;
       const html = highlighter.codeToHtml(code, {
         lang,
         theme: "github-light",

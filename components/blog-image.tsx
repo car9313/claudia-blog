@@ -13,6 +13,8 @@ interface BlogImageProps {
   priority?: boolean; // nueva: next/image priority
   sizes?: string; // nueva: sizes para next/image
   unoptimized?: boolean; // opcional override
+  /** Optional unique key to disambiguate identical images */
+  index?: number;
 }
 
 /**
@@ -77,7 +79,7 @@ export function BlogImage({
         />
 
         {/* anchor para que el client-component pueda encontrar el <figure>/<span> */}
-        <div id={clientId} />
+        <span id={clientId} />
 
         {/* Monta client overlay — no altera estructura semántica inicial */}
         <BlogImageClient anchorId={clientId} alt={alt} />

@@ -89,12 +89,16 @@ export default function BlogImageClient({
     };
   }, [anchorId, attempt]);
 
-  const handleRetry = () => {
+  const findImageFromAnchor = (anchorId: string): HTMLImageElement | null => {
     const anchor = document.getElementById(anchorId);
-    if (!anchor) return;
-    const figure = anchor.closest("figure");
-    if (!figure) return;
-    const img = figure.querySelector("img") as HTMLImageElement | null;
+    if (!anchor) return null;
+    const container = anchor.closest("figure") ?? anchor.closest("span");
+    if (!container) return null;
+    return container.querySelector("img") as HTMLImageElement | null;
+  };
+
+  const handleRetry = () => {
+    const img = findImageFromAnchor(anchorId);
     if (!img) return;
 
     // show loader / hide previous overlay
@@ -118,7 +122,7 @@ export default function BlogImageClient({
     <div
       ref={rootRef}
       id={`${anchorId}-client-root`}
-      aria-hidden
+      aria-hidden={!hasError}
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
     >
       {/* Error overlay */}
