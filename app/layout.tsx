@@ -7,14 +7,16 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import { Footer } from "../components/Footer";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
   title: "DevBlog - Blog de Programación",
   description:
     "Blog personal sobre desarrollo web, React, TypeScript, Next.js y más",
-  generator: "v0.app",
   icons: {
     icon: [
       {
@@ -41,7 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
+      <body
+        className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
