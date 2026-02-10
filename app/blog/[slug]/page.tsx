@@ -90,12 +90,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <div className="p-1.5 bg-secondary/10 rounded-full">
                 <Calendar className="h-4 w-4 text-secondary" />
               </div>
-              <time dateTime={post.date}>
-                {new Date(post.date).toLocaleDateString("es-ES", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+              <time dateTime={post.dateRaw ?? post.date}>
+                {new Date(post.dateRaw ?? post.date).toLocaleDateString(
+                  "es-ES",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
               </time>
             </div>
             <div className="flex items-center gap-2">
