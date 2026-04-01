@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Post } from "@/lib/posts.types"
 import { PostCard } from "./post-card"
 
@@ -6,10 +7,16 @@ interface PostsGridProps {
     posts: Post[]
 }
 
-export function PostsGrid({ posts }: PostsGridProps) {
+const EmptyState = () => (
+    <div className="text-center py-16">
+        <p className="text-slate-500 dark:text-slate-400 text-lg">No hay artículos en esta categoría</p>
+    </div>
+)
+
+const PostsGridComponent = ({ posts }: PostsGridProps) => {
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8 auto-rows-fr">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8 auto-rows-fr" style={{ contain: 'content' }}>
                 {posts.map((post) => (
                     <div key={`${post.slug}`} className="w-full max-w-sm mx-auto">
                         <PostCard post={post} />
@@ -17,11 +24,9 @@ export function PostsGrid({ posts }: PostsGridProps) {
                 ))}
             </div>
 
-            {posts.length === 0 && (
-                <div className="text-center py-16">
-                    <p className="text-slate-500 dark:text-slate-400 text-lg">No hay artículos en esta categoría</p>
-                </div>
-            )}
+            {posts.length === 0 && <EmptyState />}
         </div>
     )
 }
+
+export const PostsGrid = memo(PostsGridComponent)

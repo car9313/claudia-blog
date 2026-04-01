@@ -39,10 +39,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   if (!post) notFound();
 
-  const { prevPost, nextPost } = await getPrevNextPost(post.slug);
-  const relatedPosts = await getRelatedPosts(post);
   const readingTime = Math.ceil(post.content.split(/\s+/).length / 200);
-  const content = await processMarkdownToReact(post.content);
+  
+  const [prevNext, relatedPosts, content] = await Promise.all([
+    getPrevNextPost(post.slug),
+    getRelatedPosts(post),
+    processMarkdownToReact(post.content),
+  ]);
+
+  const { prevPost, nextPost } = prevNext;
 
   return (
     <div className="container py-12 mx-auto max-w-4xl px-6">

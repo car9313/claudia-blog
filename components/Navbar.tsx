@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-/* import { SearchDialog } from "./SearchDialog";
-import { ModeToggle } from "./ModeToggle";
- */import { Code2, FolderOpen, Home } from "lucide-react";
+import dynamic from 'next/dynamic'
+import { Code2, FolderOpen, Home } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import { SearchDialog } from "./search-dialog";
+
+const SearchDialog = dynamic(() => import('./search-dialog').then(mod => ({ default: mod.SearchDialog })), {
+    ssr: false,
+    loading: () => <span className="w-9 h-9" />
+})
 
 export default function Navbar() {
     const pathname = usePathname()
