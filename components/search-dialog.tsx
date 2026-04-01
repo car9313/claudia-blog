@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback, startTransition } from 'react'
+import { useState, useRef, useCallback, startTransition, useEffect } from 'react'
 import { Search, X, Loader2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Post } from '@/lib/posts.types'
@@ -17,50 +17,57 @@ export function SearchDialog() {
     const [results, setResults] = useState<Post[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [hasSearched, setHasSearched] = useState(false)
-
     const debouncedQuery = useDebounce(query, 500)
     const lastReqRef = useRef<number>(0)
 
     const performSearch = useCallback((searchQuery: string) => {
-        const q = (searchQuery ?? '').toString().trim()
-        if (!q) {
-            setResults([])
-            setHasSearched(false)
+        const trimmed = searchQuery.trim()
+        if (!trimmed) {
+            startTransition(() => {
+                setResults([])
+                setHasSearched(false)
+                setIsLoading(false)
+            })
+            lastReqRef.current = 0
             return
         }
 
-        setIsLoading(true)
-        setHasSearched(true)
+        startTransition(() => {
+            setIsLoading(true)
+            setHasSearched(true)
+        })
 
         const reqId = Date.now()
         lastReqRef.current = reqId
-        // startTransition para bajar prioridad de la actualización
-        startTransition(() => {
-            // Llamada a Server Action; Next la ejecuta en el servidor
-            searchPostsServer(q)
-                .then((data) => {
-                    // Ignorar respuestas antiguas
-                    if (lastReqRef.current !== reqId) return
+
+        searchPostsServer(trimmed)
+            .then((data) => {
+                if (lastReqRef.current !== reqId) return
+                startTransition(() => {
                     setResults(data ?? [])
                 })
-                .catch((err) => {
-                    console.error('Search error:', err)
-                    if (lastReqRef.current !== reqId) return
+            })
+            .catch(() => {
+                if (lastReqRef.current !== reqId) return
+                startTransition(() => {
                     setResults([])
                 })
-                .finally(() => {
-                    if (lastReqRef.current !== reqId) return
+            })
+            .finally(() => {
+                if (lastReqRef.current !== reqId) return
+                startTransition(() => {
                     setIsLoading(false)
                 })
-        })
+            })
     }, [])
 
-    // Auto-search cuando cambia el debouncedQuery
     useEffect(() => {
-        if (!debouncedQuery) {
-            setResults([])
-            setHasSearched(false)
-            setIsLoading(false)
+        if (!debouncedQuery || debouncedQuery.length === 0) {
+            startTransition(() => {
+                setResults([])
+                setHasSearched(false)
+                setIsLoading(false)
+            })
             lastReqRef.current = 0
             return
         }
@@ -71,8 +78,10 @@ export function SearchDialog() {
         setOpen(newOpen)
         if (!newOpen) {
             setQuery('')
-            setResults([])
-            setHasSearched(false)
+            startTransition(() => {
+                setResults([])
+                setHasSearched(false)
+            })
             lastReqRef.current = 0
         }
     }
@@ -105,12 +114,7 @@ export function SearchDialog() {
                             variant="ghost"
                             size="icon"
                             className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
-                            onClick={() => {
-                                setQuery('')
-                                setResults([])
-                                setHasSearched(false)
-                                lastReqRef.current = 0
-                            }}
+                            onClick={() => setQuery('')}
                         >
                             <X className="h-4 w-4" />
                         </Button>
@@ -128,7 +132,7 @@ export function SearchDialog() {
                     {!isLoading && hasSearched && results.length === 0 && (
                         <div className="text-center py-8">
                             <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <p className="text-muted-foreground">No se encontraron pots para "{query}"</p>
+                            <p className="text-muted-foreground">No se encontraron pots para &quot;{query}&quot;</p>
                             <p className="text-sm text-muted-foreground mt-2">Intente buscar una palabra diferente</p>
                         </div>
                     )}
