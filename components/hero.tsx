@@ -2,7 +2,7 @@ import { Sparkles, Star } from "lucide-react";
 
 export default function Hero() {
   return (
-      <section className="mb-20 text-center space-y-6 relative min-h-screen">
+      <section className="text-center space-y-2 relative min-h-screen flex flex-col justify-center items-center">
  {/* Efectos de fondo decorativos centrados */}
         <div className="absolute inset-0 -z-10 overflow-hidden h-full">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
